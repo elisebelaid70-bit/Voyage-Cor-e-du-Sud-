@@ -220,9 +220,12 @@
   .dc-list{ display:flex; flex-direction:column; gap:8px; margin-bottom:8px; }
   .dc-empty{ color:var(--ink-soft); font-size:12.5px; font-style:italic; }
   .dc-comment{ background:var(--surface-2); border-radius:var(--radius-s); padding:8px 10px; font-size:13.5px; }
-  .dc-comment .dc-meta{ display:flex; justify-content:space-between; gap:8px; font-size:11px; color:var(--ink-soft); margin-bottom:3px; }
+  .dc-comment .dc-meta{ display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:11px; color:var(--ink-soft); margin-bottom:3px; }
+  .dc-comment .dc-meta-right{ display:flex; align-items:center; gap:6px; flex-shrink:0; }
   .dc-comment .dc-author{ font-weight:600; color:var(--ink); }
   .dc-comment .dc-text{ white-space:pre-wrap; word-break:break-word; }
+  .dc-comment .del{ background:none; border:none; color:var(--ink-soft); opacity:.5; cursor:pointer; font-size:13px; padding:0; line-height:1; }
+  .dc-comment .del:hover{ opacity:1; color:var(--danger); }
   .dc-doc{ display:flex; align-items:center; gap:8px; background:var(--surface-2); border-radius:var(--radius-s); padding:7px 10px; font-size:13px; }
   .dc-doc a{ color:var(--celadon-ink); text-decoration:none; font-weight:600; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .dc-doc .dc-doc-meta{ font-size:11px; color:var(--ink-soft); flex-shrink:0; }
@@ -1005,10 +1008,12 @@
     ensureProfiles(ids, function(){
       var html = "";
       items.forEach(function(c){
-        var prof = profileCache[c.authorId];
-        var name = (prof && prof.name) || "Quelqu'un";
-        html += "<div class='dc-comment'>"+
-          "<div class='dc-meta'><span class='dc-author'></span><span>"+fmtRelative(c.createdAt)+"</span></div>"+
+        var isMine = myUserId && c.authorId === myUserId;
+        html += "<div class='dc-comment' data-comment-id='"+c.id+"'>"+
+          "<div class='dc-meta'><span class='dc-author'></span>"+
+            "<span class='dc-meta-right'><span>"+fmtRelative(c.createdAt)+"</span>"+
+            (isMine ? "<button class='del' data-comment-del='"+c.id+"' title='Supprimer'>✕</button>" : "")+
+            "</span></div>"+
           "<div class='dc-text'></div>"+
         "</div>";
       });
@@ -1020,6 +1025,22 @@
         var name = (prof && prof.name) || "Quelqu'un";
         nodes[i].querySelector(".dc-author").textContent = name;
         nodes[i].querySelector(".dc-text").textContent = c.text || "";
+      });
+      wireCommentDeleteButtons(container);
+    });
+  }
+
+  function wireCommentDeleteButtons(scope){
+    scope.querySelectorAll("[data-comment-del]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        if(!window.confirm("Supprimer définitivement ce commentaire ?")) return;
+        var commentId = btn.getAttribute("data-comment-del");
+        if(!dbApi) return;
+        btn.disabled = true;
+        dbApi.collection("comments").doc(commentId).delete().catch(function(){
+          window.alert("La suppression a échoué. Réessayez.");
+          btn.disabled = false;
+        });
       });
     });
   }
