@@ -75,7 +75,7 @@
   .tab-btn{
     appearance:none; border:none; background:none; cursor:pointer;
     font-family:inherit; font-size:15px; font-weight:600; color:var(--ink-soft);
-    padding:10px 4px; margin-right:20px; border-bottom:2px solid transparent;
+    padding:12px 4px; margin-right:20px; border-bottom:2px solid transparent; min-height:44px;
     transition:color .15s ease, border-color .15s ease;
   }
   .tab-btn.active{ color:var(--maple-ink); border-bottom-color:var(--maple); }
@@ -89,7 +89,7 @@
   .day-strip::-webkit-scrollbar{height:0;}
   .day-chip{
     flex:0 0 auto; text-align:center; background:var(--surface); border:1px solid var(--line);
-    border-radius:var(--radius-m); padding:8px 12px; cursor:pointer; min-width:56px;
+    border-radius:var(--radius-m); padding:10px 13px; cursor:pointer; min-width:56px; min-height:44px;
     font-size:12px; color:var(--ink-soft); transition:background .15s, border-color .15s, color .15s;
   }
   .day-chip .n{display:block; font-size:17px; font-weight:600; color:var(--ink); font-family:'Noto Serif KR',serif;}
@@ -102,6 +102,14 @@
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-m);
     padding:16px; margin-bottom:14px; scroll-margin-top:calc(env(safe-area-inset-top,0px) + 140px);
   }
+  .day-nav{ display:flex; gap:8px; margin-bottom:12px; }
+  .day-nav-btn{
+    flex:1; font-family:inherit; font-size:13.5px; font-weight:600; color:var(--ink-soft);
+    background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius-s);
+    padding:11px 8px; cursor:pointer; min-height:44px;
+  }
+  .day-nav-btn:disabled{ opacity:.35; cursor:default; }
+  .day-nav-btn:not(:disabled):hover{ border-color:var(--maple); color:var(--maple-ink); }
   .day-card.today{border-color:var(--maple);}
   .day-card h2{
     font-family:'Noto Serif KR', serif; font-size:17px; margin:0 0 2px; font-weight:600;
@@ -124,29 +132,29 @@
   }
   .event .del{
     flex-shrink:0; background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:16px;
-    padding:2px 4px; opacity:.55;
+    padding:10px 8px; opacity:.55; min-width:36px; min-height:36px;
   }
   .event .del:hover{opacity:1; color:var(--danger);}
   .empty-hint{ color:var(--ink-soft); font-size:13.5px; padding:6px 0 4px; font-style:italic;}
 
   .add-toggle{
     margin-top:6px; background:none; border:1px dashed var(--line); color:var(--ink-soft);
-    border-radius:var(--radius-s); padding:7px 10px; font-size:13px; cursor:pointer; width:100%;
-    font-family:inherit;
+    border-radius:var(--radius-s); padding:11px 10px; font-size:13px; cursor:pointer; width:100%;
+    font-family:inherit; min-height:44px;
   }
   .add-toggle:hover{ border-color:var(--maple); color:var(--maple-ink); }
   .add-form{ display:none; margin-top:10px; padding-top:10px; border-top:1px dashed var(--line); }
   .add-form.open{ display:block; }
   .add-form .row{ display:flex; gap:8px; margin-bottom:8px; }
   .add-form select, .add-form input[type="time"], .add-form input[type="text"], .add-form textarea{
-    font-family:inherit; font-size:13.5px; border:1px solid var(--line); border-radius:var(--radius-s);
-    padding:8px 9px; background:var(--surface-2); color:var(--ink); width:100%;
+    font-family:inherit; font-size:16px; border:1px solid var(--line); border-radius:var(--radius-s);
+    padding:10px 9px; background:var(--surface-2); color:var(--ink); width:100%; min-height:44px;
   }
-  .add-form textarea{ min-height:44px; resize:vertical; }
+  .add-form textarea{ min-height:60px; resize:vertical; }
   .add-form .file-row{ display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:12.5px; color:var(--ink-soft); }
   .btn{
-    font-family:inherit; font-size:13.5px; font-weight:600; border:none; border-radius:var(--radius-s);
-    padding:8px 14px; cursor:pointer;
+    font-family:inherit; font-size:14px; font-weight:600; border:none; border-radius:var(--radius-s);
+    padding:11px 16px; cursor:pointer; min-height:44px;
   }
   .btn-primary{ background:var(--maple); color:#fff; }
   .btn-ghost{ background:none; color:var(--ink-soft); }
@@ -161,16 +169,35 @@
     font-family:'Noto Serif KR', serif; font-size:14.5px; font-weight:600; margin:0 0 8px; color:var(--ink);
   }
   .cl-item{
-    display:flex; align-items:flex-start; gap:10px; padding:8px 0; border-top:1px solid var(--line);
+    display:flex; align-items:center; gap:10px; padding:10px 0; border-top:1px solid var(--line);
   }
   .cl-item:first-of-type{ border-top:none; }
-  .cl-item input[type="checkbox"]{ margin-top:3px; width:16px; height:16px; accent-color:var(--celadon-ink); flex-shrink:0;}
-  .cl-item label{ font-size:14px; flex:1; cursor:pointer; }
-  .cl-item.checked label{ color:var(--ink-soft); text-decoration:line-through; }
-  .cl-item .del{ background:none; border:none; color:var(--ink-soft); opacity:.5; cursor:pointer; font-size:15px; }
+  .cl-checks{ display:flex; gap:6px; flex-shrink:0; }
+  .cl-person{
+    display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%;
+    border:1px solid var(--line); font-size:12.5px; font-weight:700; color:var(--ink-soft); cursor:pointer;
+    position:relative; user-select:none; flex-shrink:0;
+  }
+  .cl-person input[type="checkbox"]{ position:absolute; inset:0; opacity:0; margin:0; cursor:pointer; }
+  .cl-person.on{ background:var(--celadon-ink); border-color:var(--celadon-ink); color:#fff; }
+  .cl-text{ font-size:14.5px; flex:1; }
+  .cl-item.checked .cl-text{ color:var(--ink-soft); text-decoration:line-through; }
+  .cl-item .del{ background:none; border:none; color:var(--ink-soft); opacity:.55; cursor:pointer; font-size:16px; min-width:36px; min-height:36px; }
   .cl-item .del:hover{ opacity:1; color:var(--danger); }
-  .cl-add{ display:flex; gap:8px; margin-top:8px; }
-  .cl-add input{ flex:1; font-family:inherit; font-size:13.5px; border:1px solid var(--line); border-radius:var(--radius-s); padding:8px 9px; background:var(--surface-2); color:var(--ink); }
+  .cl-add{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .cl-add input{ flex:1; min-width:160px; font-family:inherit; font-size:16px; border:1px solid var(--line); border-radius:var(--radius-s); padding:10px 9px; background:var(--surface-2); color:var(--ink); min-height:44px; }
+
+  /* owner tagging (documents / attachments belonging to Paul or Élise) */
+  .owner-badge{
+    font-size:11px; font-weight:600; color:var(--maple-ink); background:var(--surface-2);
+    border:1px solid var(--line); padding:2px 8px; border-radius:999px; white-space:nowrap;
+  }
+  .owner-label{ display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--ink-soft); width:100%; }
+  .owner-label select, select.owner-select{
+    font-family:inherit; font-size:16px; border:1px solid var(--line); border-radius:var(--radius-s);
+    padding:9px 8px; background:var(--surface); color:var(--ink); min-height:44px;
+  }
+  select.owner-select{ flex-shrink:0; }
 
   .hint{ color:var(--ink-soft); font-size:13.5px; }
   footer.note{ color:var(--ink-soft); font-size:11.5px; text-align:center; margin-top:24px; line-height:1.6; }
@@ -181,19 +208,19 @@
   /* event attachments */
   .event .meta-row{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:6px; }
   .maps-link, .attach-link{
-    font-size:12px; color:var(--celadon-ink); text-decoration:none; background:var(--surface-2);
-    border:1px solid var(--line); padding:3px 9px; border-radius:999px;
+    font-size:12.5px; color:var(--celadon-ink); text-decoration:none; background:var(--surface-2);
+    border:1px solid var(--line); padding:8px 12px; border-radius:999px; min-height:36px; display:inline-flex; align-items:center;
   }
   .link-toggle{
-    background:none; border:1px dashed var(--line); color:var(--ink-soft); font-size:12px;
-    padding:3px 9px; border-radius:999px; cursor:pointer; font-family:inherit;
+    background:none; border:1px dashed var(--line); color:var(--ink-soft); font-size:12.5px;
+    padding:8px 12px; border-radius:999px; cursor:pointer; font-family:inherit; min-height:36px;
   }
   .link-toggle:hover{ border-color:var(--maple); color:var(--maple-ink); }
   .attach-form{ margin-top:8px; padding:10px; border:1px dashed var(--line); border-radius:var(--radius-s); background:var(--surface-2); }
-  .attach-form .row{ display:flex; gap:8px; margin-bottom:8px; }
+  .attach-form .row{ display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
   .attach-form input[type="text"], .attach-form input[type="url"], .attach-form input[type="file"]{
-    font-family:inherit; font-size:13px; border:1px solid var(--line); border-radius:var(--radius-s);
-    padding:7px 8px; background:var(--surface); color:var(--ink); width:100%;
+    font-family:inherit; font-size:16px; border:1px solid var(--line); border-radius:var(--radius-s);
+    padding:9px 8px; background:var(--surface); color:var(--ink); width:100%; min-height:44px;
   }
   .attach-form .small-hint{ font-size:11.5px; color:var(--ink-soft); margin:0 0 8px; }
   .add-form .row.three > *{ flex:1; }
@@ -213,6 +240,23 @@
 
   /* day extras: comments + shared documents */
   .day-extra{ margin-top:14px; padding-top:12px; border-top:1px dashed var(--line); display:flex; flex-direction:column; gap:16px; }
+
+  .dc-photos{ display:grid; grid-template-columns:repeat(auto-fill, minmax(84px, 1fr)); gap:8px; margin-bottom:8px; }
+  .dc-photo{ position:relative; aspect-ratio:1/1; border-radius:var(--radius-s); overflow:hidden; background:var(--surface-2); }
+  .dc-photo img{ width:100%; height:100%; object-fit:cover; cursor:pointer; display:block; }
+  .dc-photo-del{
+    position:absolute; top:4px; right:4px; width:26px; height:26px; border-radius:50%; border:none;
+    background:rgba(0,0,0,.55); color:#fff; font-size:13px; cursor:pointer; line-height:1;
+  }
+  .lightbox-overlay{
+    position:fixed; inset:0; background:rgba(10,10,8,.92); z-index:1000; display:flex;
+    align-items:center; justify-content:center; padding:24px; padding-top:calc(24px + env(safe-area-inset-top,0px));
+  }
+  .lightbox-overlay img{ max-width:100%; max-height:100%; border-radius:8px; object-fit:contain; }
+  .lightbox-close{
+    position:absolute; top:calc(16px + env(safe-area-inset-top,0px)); right:16px; width:40px; height:40px;
+    border-radius:50%; border:none; background:rgba(255,255,255,.15); color:#fff; font-size:16px; cursor:pointer;
+  }
   .dc-section .dc-header{
     font-size:12px; font-weight:600; letter-spacing:.02em; color:var(--ink-soft);
     text-transform:uppercase; margin-bottom:8px; display:flex; align-items:center; gap:6px;
@@ -224,21 +268,38 @@
   .dc-comment .dc-meta-right{ display:flex; align-items:center; gap:6px; flex-shrink:0; }
   .dc-comment .dc-author{ font-weight:600; color:var(--ink); }
   .dc-comment .dc-text{ white-space:pre-wrap; word-break:break-word; }
-  .dc-comment .del{ background:none; border:none; color:var(--ink-soft); opacity:.5; cursor:pointer; font-size:13px; padding:0; line-height:1; }
+  .dc-comment .del{ background:none; border:none; color:var(--ink-soft); opacity:.5; cursor:pointer; font-size:15px; padding:6px; line-height:1; min-width:32px; min-height:32px; }
   .dc-comment .del:hover{ opacity:1; color:var(--danger); }
-  .dc-doc{ display:flex; align-items:center; gap:8px; background:var(--surface-2); border-radius:var(--radius-s); padding:7px 10px; font-size:13px; }
-  .dc-doc a{ color:var(--celadon-ink); text-decoration:none; font-weight:600; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .dc-doc .dc-doc-meta{ font-size:11px; color:var(--ink-soft); flex-shrink:0; }
-  .dc-doc .del{ background:none; border:none; color:var(--ink-soft); opacity:.5; cursor:pointer; font-size:14px; flex-shrink:0; }
+  .dc-doc{ display:flex; align-items:center; flex-wrap:wrap; gap:8px; background:var(--surface-2); border-radius:var(--radius-s); padding:9px 10px; font-size:13px; }
+  .dc-doc a{ color:var(--celadon-ink); text-decoration:none; font-weight:600; flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .dc-doc .dc-doc-meta{ font-size:11px; color:var(--ink-soft); flex-shrink:0; width:100%; order:3; }
+  .dc-doc .del{ background:none; border:none; color:var(--ink-soft); opacity:.5; cursor:pointer; font-size:15px; flex-shrink:0; min-width:32px; min-height:32px; }
   .dc-doc .del:hover{ opacity:1; color:var(--danger); }
-  .dc-add{ display:flex; gap:8px; }
+  .dc-add{ display:flex; flex-wrap:wrap; gap:8px; }
   .dc-add textarea{
-    flex:1; font-family:inherit; font-size:13.5px; border:1px solid var(--line); border-radius:var(--radius-s);
-    padding:8px 9px; background:var(--surface); color:var(--ink); min-height:38px; resize:vertical;
+    flex:1 1 100%; font-family:inherit; font-size:16px; border:1px solid var(--line); border-radius:var(--radius-s);
+    padding:10px 9px; background:var(--surface); color:var(--ink); min-height:60px; resize:vertical;
   }
-  .dc-add input[type="file"]{ flex:1; font-size:12.5px; }
-  .dc-add button{ flex-shrink:0; align-self:flex-end; }
+  .dc-add input[type="file"]{ flex:1 1 100%; font-size:13px; }
+  .dc-add select.owner-select{ flex:1 1 auto; }
+  .dc-add button{ flex:1 1 100%; }
   .dc-disabled-note{ color:var(--ink-soft); font-size:12px; font-style:italic; }
+</style>
+
+<!-- mobile ergonomics: comfortable tap targets and no accidental iOS zoom on inputs -->
+<style>
+  @media (max-width: 600px){
+    .app{ padding:0 12px 56px; }
+    h1{ font-size:24px; }
+    .add-form .row{ flex-direction:column; }
+    .add-form .row > *{ width:100%; }
+    .attach-form .row{ flex-direction:column; }
+    .owner-label{ flex-wrap:wrap; }
+    .owner-label select{ flex:1 1 100%; }
+    .dc-doc a{ flex:1 1 100%; order:1; }
+    .owner-badge{ order:2; }
+    .dc-doc .del{ order:4; margin-left:auto; }
+  }
 </style>
 
 <script>
@@ -782,6 +843,15 @@
     autre:  {icon:"📌", label:"Autre"}
   };
 
+  var TRAVELERS = ["Paul", "Elise"];
+  function ownerOptionsHtml(selected){
+    var html = "<option value=''"+(!selected?" selected":"")+">Commun</option>";
+    TRAVELERS.forEach(function(name){
+      html += "<option value='"+name+"'"+(selected===name?" selected":"")+">"+name+"</option>";
+    });
+    return html;
+  }
+
   var state = null;
   var assetsApi = null;
   var dbApi = null;
@@ -794,6 +864,7 @@
   // live shared data (comments + day-level documents), grouped by day iso
   var commentsByDay = {};
   var docsByDay = {};
+  var photosByDay = {};
   var profileCache = {}; // authorId -> {name, ...}
 
   function loadState(){
@@ -886,8 +957,9 @@
       chip.addEventListener("click", function(){
         selectedDay = iso;
         renderDayStrip();
-        var card = document.getElementById("day-"+iso);
-        if(card) card.scrollIntoView({behavior:"smooth", block:"start"});
+        renderDayList();
+        var list = document.getElementById("day-list");
+        if(list) list.scrollIntoView({behavior:"smooth", block:"start"});
       });
       strip.appendChild(chip);
     });
@@ -897,53 +969,74 @@
     var list = document.getElementById("day-list");
     var today = todayISO();
     list.innerHTML = "";
-    dateList().forEach(function(iso){
-      var card = document.createElement("div");
-      card.className = "day-card" + (iso===today?" today":"");
-      card.id = "day-"+iso;
-      var events = (state.days[iso]||[]).slice().sort(function(a,b){ return (a.time||"").localeCompare(b.time||""); });
 
-      var city = (state.cities||{})[iso];
-      var html = "<h2>"+fmtLong(iso)+"</h2><p class='subline'>Jour "+ (dateList().indexOf(iso)+1) +" sur 16"+(city?" · "+escapeHtml(city):"")+"</p>";
-      if(city && CLIMATE[city]) html += "<p class='climate-line'>🌤 Climat de saison (moyennes) : "+CLIMATE[city]+"</p>";
-      if(events.length===0){
-        html += "<p class='empty-hint'>Rien de prévu pour l'instant.</p>";
-      } else {
-        events.forEach(function(ev){
-          var t = EVENT_TYPES[ev.type] || EVENT_TYPES.autre;
-          html += "<div class='event' data-id='"+ev.id+"'>";
-          html += "<div class='icon'>"+t.icon+"</div>";
-          html += "<div class='body'>";
-          html += "<div><span class='time'>"+(ev.time||"")+"</span><span class='title'>"+escapeHtml(ev.title||t.label)+"</span></div>";
-          if(ev.notes) html += "<div class='notes'>"+escapeHtml(ev.notes)+"</div>";
-          var metaBits = "";
-          if(ev.address) metaBits += "<a class='maps-link' target='_blank' rel='noopener' href='"+mapsUrl(ev.address)+"'>📍 Voir sur la carte</a>";
-          if(ev.attachment){
-            var aIcon = ev.attachment.kind==="link" ? "🔗" : "📎";
-            metaBits += "<a class='attach-link' target='_blank' rel='noopener' href='"+ev.attachment.url+"'>"+aIcon+" "+escapeHtml(ev.attachment.name||"Document")+"</a>";
-            metaBits += "<button class='link-toggle' data-del-attach='"+ev.id+"' data-del-attach-day='"+iso+"'>✕ Retirer</button>";
-          } else {
-            metaBits += "<button class='link-toggle' data-attach-toggle='"+ev.id+"'>"+(openAttachId===ev.id?"– Fermer":"📎 Ajouter un document / lien")+"</button>";
-          }
-          if(metaBits) html += "<div class='meta-row'>"+metaBits+"</div>";
-          if(!ev.attachment && openAttachId===ev.id) html += attachFormHtml(iso, ev.id);
-          html += "</div>";
-          html += "<button class='del' data-del-event='"+ev.id+"' data-del-day='"+iso+"' title='Supprimer'>✕</button>";
-          html += "</div>";
-        });
-      }
+    var iso = selectedDay;
+    if(dateList().indexOf(iso)===-1) iso = dateList()[0];
 
-      html += "<button class='add-toggle' data-add-toggle='"+iso+"'>"+(openAddForm===iso ? "– Fermer" : "+ Ajouter un élément")+"</button>";
-      html += "<div class='add-form"+(openAddForm===iso?" open":"")+"' data-add-form='"+iso+"'>"+addFormHtml(iso)+"</div>";
+    var card = document.createElement("div");
+    card.className = "day-card" + (iso===today?" today":"");
+    card.id = "day-"+iso;
+    var events = (state.days[iso]||[]).slice().sort(function(a,b){ return (a.time||"").localeCompare(b.time||""); });
 
-      html += dayExtraShellHtml(iso);
+    var city = (state.cities||{})[iso];
+    var html = "<div class='day-nav'>"+
+      "<button class='day-nav-btn' id='day-prev' "+(dateList().indexOf(iso)===0?"disabled":"")+">← Veille</button>"+
+      "<button class='day-nav-btn' id='day-next' "+(dateList().indexOf(iso)===dateList().length-1?"disabled":"")+">Lendemain →</button>"+
+    "</div>";
+    html += "<h2>"+fmtLong(iso)+"</h2><p class='subline'>Jour "+ (dateList().indexOf(iso)+1) +" sur 16"+(city?" · "+escapeHtml(city):"")+"</p>";
+    if(city && CLIMATE[city]) html += "<p class='climate-line'>🌤 Climat de saison (moyennes) : "+CLIMATE[city]+"</p>";
+    if(events.length===0){
+      html += "<p class='empty-hint'>Rien de prévu pour l'instant.</p>";
+    } else {
+      events.forEach(function(ev){
+        var t = EVENT_TYPES[ev.type] || EVENT_TYPES.autre;
+        html += "<div class='event' data-id='"+ev.id+"'>";
+        html += "<div class='icon'>"+t.icon+"</div>";
+        html += "<div class='body'>";
+        html += "<div><span class='time'>"+(ev.time||"")+"</span><span class='title'>"+escapeHtml(ev.title||t.label)+"</span></div>";
+        if(ev.notes) html += "<div class='notes'>"+escapeHtml(ev.notes)+"</div>";
+        var metaBits = "";
+        if(ev.address) metaBits += "<a class='maps-link' target='_blank' rel='noopener' href='"+mapsUrl(ev.address)+"'>📍 Voir sur la carte</a>";
+        if(ev.attachment){
+          var aIcon = ev.attachment.kind==="link" ? "🔗" : "📎";
+          var ownerBadge = ev.attachment.owner && ev.attachment.owner!=="Commun" ? " <span class='owner-badge'>👤 "+escapeHtml(ev.attachment.owner)+"</span>" : "";
+          metaBits += "<a class='attach-link' target='_blank' rel='noopener' href='"+ev.attachment.url+"'>"+aIcon+" "+escapeHtml(ev.attachment.name||"Document")+"</a>"+ownerBadge;
+          metaBits += "<button class='link-toggle' data-del-attach='"+ev.id+"' data-del-attach-day='"+iso+"'>✕ Retirer</button>";
+        } else {
+          metaBits += "<button class='link-toggle' data-attach-toggle='"+ev.id+"'>"+(openAttachId===ev.id?"– Fermer":"📎 Ajouter un document / lien")+"</button>";
+        }
+        if(metaBits) html += "<div class='meta-row'>"+metaBits+"</div>";
+        if(!ev.attachment && openAttachId===ev.id) html += attachFormHtml(iso, ev.id);
+        html += "</div>";
+        html += "<button class='del' data-del-event='"+ev.id+"' data-del-day='"+iso+"' title='Supprimer'>✕</button>";
+        html += "</div>";
+      });
+    }
 
-      card.innerHTML = html;
-      list.appendChild(card);
-    });
+    html += "<button class='add-toggle' data-add-toggle='"+iso+"'>"+(openAddForm===iso ? "– Fermer" : "+ Ajouter un élément")+"</button>";
+    html += "<div class='add-form"+(openAddForm===iso?" open":"")+"' data-add-form='"+iso+"'>"+addFormHtml(iso)+"</div>";
+
+    html += dayExtraShellHtml(iso);
+
+    card.innerHTML = html;
+    list.appendChild(card);
+
     wireDayListEvents();
     wireDayExtraEvents();
-    dateList().forEach(function(iso){ renderCommentsFor(iso); renderDocsFor(iso); });
+    renderPhotosFor(iso);
+    renderCommentsFor(iso);
+    renderDocsFor(iso);
+
+    var prevBtn = document.getElementById("day-prev");
+    var nextBtn = document.getElementById("day-next");
+    if(prevBtn) prevBtn.addEventListener("click", function(){
+      var i = dateList().indexOf(selectedDay);
+      if(i>0){ selectedDay = dateList()[i-1]; renderDayStrip(); renderDayList(); }
+    });
+    if(nextBtn) nextBtn.addEventListener("click", function(){
+      var i = dateList().indexOf(selectedDay);
+      if(i<dateList().length-1){ selectedDay = dateList()[i+1]; renderDayStrip(); renderDayList(); }
+    });
   }
 
   /* ---------- comments + shared documents (per day, synced via db) ---------- */
@@ -956,6 +1049,13 @@
     var canUploadDocs = !!assetsApi;
     return "<div class='day-extra'>"+
       "<div class='dc-section'>"+
+        "<div class='dc-header'>📷 Photos</div>"+
+        "<div class='dc-photos' id='photos-grid-"+iso+"'><p class='dc-empty'>Chargement…</p></div>"+
+        (canUploadDocs
+          ? "<div class='dc-add'><input type='file' accept='image/*' multiple data-photo-input='"+iso+"'><button class='btn btn-primary' data-photo-send='"+iso+"'>Ajouter</button></div>"
+          : "<p class='dc-disabled-note'>Connexion en cours…</p>")+
+      "</div>"+
+      "<div class='dc-section'>"+
         "<div class='dc-header'>💬 Commentaires</div>"+
         "<div class='dc-list' id='comments-list-"+iso+"'><p class='dc-empty'>Chargement…</p></div>"+
         "<div class='dc-add'>"+
@@ -967,7 +1067,7 @@
         "<div class='dc-header'>📎 Documents partagés</div>"+
         "<div class='dc-list' id='docs-list-"+iso+"'><p class='dc-empty'>Chargement…</p></div>"+
         (canUploadDocs
-          ? "<div class='dc-add'><input type='file' data-doc-input='"+iso+"'><button class='btn btn-primary' data-doc-send='"+iso+"'>Ajouter</button></div>"
+          ? "<div class='dc-add'><input type='file' data-doc-input='"+iso+"'><select class='owner-select' data-doc-owner='"+iso+"'>"+ownerOptionsHtml()+"</select><button class='btn btn-primary' data-doc-send='"+iso+"'>Ajouter</button></div>"
           : "<p class='dc-disabled-note'>Connexion en cours…</p>")+
       "</div>"+
     "</div>";
@@ -992,7 +1092,52 @@
     }).catch(function(){ cb(); });
   }
 
+  function renderPhotosFor(iso){
+    var container = document.getElementById("photos-grid-"+iso);
+    if(!container) return;
+    var items = (photosByDay[iso]||[]).slice().sort(function(a,b){ return (a.createdAt||"").localeCompare(b.createdAt||""); });
+    if(!dbApi){
+      container.innerHTML = "<p class='dc-empty'>Photos indisponibles pour l'instant.</p>";
+      return;
+    }
+    if(items.length===0){
+      container.innerHTML = "<p class='dc-empty'>Aucune photo pour ce jour.</p>";
+      return;
+    }
+    var html = "";
+    items.forEach(function(p){
+      var isMine = myUserId && p.uploaderId === myUserId;
+      html += "<div class='dc-photo' data-photo-id='"+p.id+"'>"+
+        "<img src='"+p.url+"' alt='' loading='lazy' data-photo-open='"+p.url+"'>"+
+        (isMine ? "<button class='dc-photo-del' data-photo-del='"+p.id+"' data-photo-del-asset='"+p.assetId+"' title='Supprimer'>✕</button>" : "")+
+      "</div>";
+    });
+    container.innerHTML = html;
+    container.querySelectorAll("[data-photo-open]").forEach(function(img){
+      img.addEventListener("click", function(){ openLightbox(img.getAttribute("data-photo-open")); });
+    });
+    container.querySelectorAll("[data-photo-del]").forEach(function(btn){
+      btn.addEventListener("click", function(e){
+        e.stopPropagation();
+        if(!window.confirm("Supprimer définitivement cette photo ?")) return;
+        var photoId = btn.getAttribute("data-photo-del");
+        var assetId = btn.getAttribute("data-photo-del-asset");
+        if(assetsApi && assetId) assetsApi.delete(assetId).catch(function(){});
+        if(dbApi) dbApi.collection("dayPhotos").doc(photoId).delete().catch(function(){});
+      });
+    });
+  }
+
+  function openLightbox(url){
+    var overlay = document.createElement("div");
+    overlay.className = "lightbox-overlay";
+    overlay.innerHTML = "<img src='"+url+"' alt=''><button class='lightbox-close' aria-label='Fermer'>✕</button>";
+    overlay.addEventListener("click", function(){ overlay.remove(); });
+    document.body.appendChild(overlay);
+  }
+
   function renderCommentsFor(iso){
+
     var container = document.getElementById("comments-list-"+iso);
     if(!container) return;
     var items = (commentsByDay[iso]||[]).slice().sort(function(a,b){ return (a.createdAt||"").localeCompare(b.createdAt||""); });
@@ -1063,6 +1208,7 @@
       items.forEach(function(d){
         html += "<div class='dc-doc' data-doc-id='"+d.id+"'>"+
           "<a target='_blank' rel='noopener' href='"+(d.url||"#")+"'></a>"+
+          (d.owner ? "<span class='owner-badge'>👤 "+escapeHtml(d.owner)+"</span>" : "")+
           "<span class='dc-doc-meta'></span>"+
           (assetsApi ? "<button class='del' data-doc-del='"+d.id+"' data-doc-del-asset='"+d.assetId+"' title='Supprimer'>✕</button>" : "")+
         "</div>";
@@ -1092,7 +1238,7 @@
   }
 
   function refreshAllExtras(){
-    dateList().forEach(function(iso){ renderCommentsFor(iso); renderDocsFor(iso); });
+    dateList().forEach(function(iso){ renderPhotosFor(iso); renderCommentsFor(iso); renderDocsFor(iso); });
   }
 
   function subscribeSharedData(){
@@ -1130,14 +1276,51 @@
         var d = doc.data();
         if(!d || !d.day) return;
         if(!byDay[d.day]) byDay[d.day] = [];
-        byDay[d.day].push({ id: doc.id, name: d.name, assetId: d.assetId, url: d.url, uploaderId: d.uploaderId, createdAt: d.createdAt });
+        byDay[d.day].push({ id: doc.id, name: d.name, assetId: d.assetId, url: d.url, owner: d.owner, uploaderId: d.uploaderId, createdAt: d.createdAt });
       });
       docsByDay = byDay;
       dateList().forEach(function(iso){ renderDocsFor(iso); });
     }, function(){ /* transient — keep last known state visible */ });
+
+    dbApi.collection("dayPhotos").orderBy("createdAt","asc").onSnapshot(function(snap){
+      var byDay = {};
+      snap.docs.forEach(function(doc){
+        var d = doc.data();
+        if(!d || !d.day) return;
+        if(!byDay[d.day]) byDay[d.day] = [];
+        byDay[d.day].push({ id: doc.id, url: d.url, assetId: d.assetId, uploaderId: d.uploaderId, createdAt: d.createdAt });
+      });
+      photosByDay = byDay;
+      dateList().forEach(function(iso){ renderPhotosFor(iso); });
+    }, function(){ /* transient — keep last known state visible */ });
   }
 
   function wireDayExtraEvents(){
+    document.querySelectorAll("[data-photo-send]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var iso = btn.getAttribute("data-photo-send");
+        var input = document.querySelector("[data-photo-input='"+iso+"']");
+        var files = input.files ? Array.prototype.slice.call(input.files) : [];
+        if(files.length===0) return;
+        if(!navigator.onLine){ window.alert("Vous êtes hors ligne : l'ajout de photos nécessite une connexion."); return; }
+        if(!assetsApi || !dbApi){ window.alert("L'ajout de photos n'est pas disponible dans cette vue."); return; }
+        btn.disabled = true;
+        Promise.resolve(userApi ? userApi.id() : null).then(function(uid){
+          return Promise.all(files.map(function(file){
+            return assetsApi.upload(file).then(function(res){
+              return dbApi.collection("dayPhotos").add({
+                day: iso, url: res.url, assetId: res.id, uploaderId: uid || null, createdAt: new Date().toISOString()
+              });
+            });
+          }));
+        }).then(function(){
+          input.value = "";
+        }).catch(function(){
+          window.alert("Certaines photos n'ont pas pu être ajoutées. Réessayez.");
+        }).finally(function(){ btn.disabled = false; });
+      });
+    });
+
     document.querySelectorAll("[data-comment-send]").forEach(function(btn){
       btn.addEventListener("click", function(){
         var iso = btn.getAttribute("data-comment-send");
@@ -1163,6 +1346,8 @@
       btn.addEventListener("click", function(){
         var iso = btn.getAttribute("data-doc-send");
         var input = document.querySelector("[data-doc-input='"+iso+"']");
+        var ownerSelect = document.querySelector("[data-doc-owner='"+iso+"']");
+        var owner = ownerSelect ? ownerSelect.value : "";
         var file = input.files && input.files[0];
         if(!file) return;
         if(!navigator.onLine){ window.alert("Vous êtes hors ligne : l'ajout de document nécessite une connexion."); return; }
@@ -1171,11 +1356,12 @@
         assetsApi.upload(file).then(function(res){
           return Promise.resolve(userApi ? userApi.id() : null).then(function(uid){
             return dbApi.collection("dayDocuments").add({
-              day: iso, name: file.name, assetId: res.id, url: res.url, uploaderId: uid || null, createdAt: new Date().toISOString()
+              day: iso, name: file.name, assetId: res.id, url: res.url, owner: owner, uploaderId: uid || null, createdAt: new Date().toISOString()
             });
           });
         }).then(function(){
           input.value = "";
+          if(ownerSelect) ownerSelect.value = "";
         }).catch(function(){
           window.alert("Le document n'a pas pu être ajouté. Réessayez.");
         }).finally(function(){ btn.disabled = false; });
@@ -1196,6 +1382,7 @@
       "<div class='row'><input type='file' class='af-file'></div>"+
       "<div class='row'><input type='url' class='af-link' placeholder='https://…'></div>"+
       "<div class='row'><input type='text' class='af-label' placeholder=\"Nom à afficher (ex : Réservation hôtel)\"></div>"+
+      "<div class='row'><label class='owner-label'>Appartient à <select class='af-owner'>"+ownerOptionsHtml()+"</select></label></div>"+
       "<button class='btn btn-primary' data-save-attach='"+iso+"' data-save-attach-id='"+eventId+"'>Enregistrer</button>"+
       "</div>";
   }
@@ -1214,6 +1401,7 @@
       "<div class='file-row'><span>📎 Document ou 🔗 lien :</span></div>"+
       "<div class='row'><input type='file' class='f-file'></div>"+
       "<div class='row'><input type='url' class='f-link' placeholder='https://… (si pas de fichier)'></div>"+
+      "<div class='row'><label class='owner-label'>Appartient à <select class='f-owner'>"+ownerOptionsHtml()+"</select></label></div>"+
       "<button class='btn btn-primary' data-save='"+iso+"'>Enregistrer</button>";
   }
 
@@ -1283,18 +1471,19 @@
     var file = formEl.querySelector(".af-file").files[0];
     var link = formEl.querySelector(".af-link").value.trim();
     var label = formEl.querySelector(".af-label").value.trim();
+    var owner = formEl.querySelector(".af-owner") ? formEl.querySelector(".af-owner").value : "";
 
     function done(){ openAttachId = null; persist(); }
 
     if(file && assetsApi){
       assetsApi.upload(file).then(function(res){
-        ev.attachment = { url: res.url, name: label || file.name, kind:"file" };
+        ev.attachment = { url: res.url, name: label || file.name, kind:"file", owner: owner };
         done();
       }).catch(function(){ done(); });
     } else if(link){
       var url = normalizeUrl(link);
       var name = label || url.replace(/^https?:\/\//,"").split("/")[0];
-      ev.attachment = { url: url, name: name, kind:"link" };
+      ev.attachment = { url: url, name: name, kind:"link", owner: owner };
       done();
     } else {
       done();
@@ -1310,6 +1499,7 @@
     var fileInput = formEl.querySelector(".f-file");
     var file = fileInput && fileInput.files && fileInput.files[0];
     var link = formEl.querySelector(".f-link").value.trim();
+    var owner = formEl.querySelector(".f-owner") ? formEl.querySelector(".f-owner").value : "";
 
     var ev = { id: uid(), type: type, time: time, title: title, notes: notes };
     if(address) ev.address = address;
@@ -1323,12 +1513,12 @@
 
     if(file && assetsApi){
       assetsApi.upload(file).then(function(res){
-        ev.attachment = { url: res.url, name: file.name, kind:"file" };
+        ev.attachment = { url: res.url, name: file.name, kind:"file", owner: owner };
         finish();
       }).catch(function(){ finish(); });
     } else if(link){
       var url = normalizeUrl(link);
-      ev.attachment = { url: url, name: url.replace(/^https?:\/\//,"").split("/")[0], kind:"link" };
+      ev.attachment = { url: url, name: url.replace(/^https?:\/\//,"").split("/")[0], kind:"link", owner: owner };
       finish();
     } else {
       finish();
@@ -1339,20 +1529,33 @@
   function renderChecklist(){
     var container = document.getElementById("checklist-container");
     var items = state.checklist || [];
-    var done = items.filter(function(i){return i.checked;}).length;
-    var pct = items.length ? Math.round(done/items.length*100) : 0;
+    items.forEach(function(i){
+      if(i.checked && i.checkedPaul===undefined && i.checkedElise===undefined){
+        TRAVELERS.forEach(function(name){ i["checked"+name] = true; });
+      }
+    });
+    var totalChecks = items.length * TRAVELERS.length;
+    var doneChecks = 0;
+    items.forEach(function(i){ TRAVELERS.forEach(function(name){ if(i["checked"+name]) doneChecks++; }); });
+    var pct = totalChecks ? Math.round(doneChecks/totalChecks*100) : 0;
 
     var cats = [];
     items.forEach(function(i){ if(cats.indexOf(i.cat)===-1) cats.push(i.cat); });
 
-    var html = "<div class='cl-progress'><div class='cl-bar'><div style='width:"+pct+"%'></div></div><span>"+done+" / "+items.length+"</span></div>";
+    var html = "<div class='cl-progress'><div class='cl-bar'><div style='width:"+pct+"%'></div></div><span>"+doneChecks+" / "+totalChecks+"</span></div>";
 
     cats.forEach(function(cat){
       html += "<div class='cl-group'><h3>"+escapeHtml(cat)+"</h3>";
       items.filter(function(i){return i.cat===cat;}).forEach(function(i){
-        html += "<div class='cl-item"+(i.checked?" checked":"")+"'>"+
-          "<input type='checkbox' id='cl-"+i.id+"' data-toggle='"+i.id+"' "+(i.checked?"checked":"")+">"+
-          "<label for='cl-"+i.id+"'>"+escapeHtml(i.text)+"</label>"+
+        var allChecked = TRAVELERS.every(function(name){ return !!i["checked"+name]; });
+        html += "<div class='cl-item"+(allChecked?" checked":"")+"'>"+
+          "<span class='cl-checks'>"+
+            TRAVELERS.map(function(name){
+              var checked = !!i["checked"+name];
+              return "<label class='cl-person"+(checked?" on":"")+"' title='"+name+"'><input type='checkbox' data-toggle-person='"+i.id+"|"+name+"' "+(checked?"checked":"")+"><span>"+name.charAt(0)+"</span></label>";
+            }).join("")+
+          "</span>"+
+          "<label class='cl-text'>"+escapeHtml(i.text)+"</label>"+
           "<button class='del' data-del-item='"+i.id+"' title='Supprimer'>✕</button>"+
         "</div>";
       });
@@ -1365,11 +1568,12 @@
 
     container.innerHTML = html;
 
-    container.querySelectorAll("[data-toggle]").forEach(function(cb){
+    container.querySelectorAll("[data-toggle-person]").forEach(function(cb){
       cb.addEventListener("change", function(){
-        var id = cb.getAttribute("data-toggle");
+        var parts = cb.getAttribute("data-toggle-person").split("|");
+        var id = parts[0], person = parts[1];
         var item = state.checklist.find(function(i){return i.id===id;});
-        if(item){ item.checked = cb.checked; persist(); }
+        if(item){ item["checked"+person] = cb.checked; persist(); }
       });
     });
     container.querySelectorAll("[data-del-item]").forEach(function(btn){
@@ -1386,7 +1590,9 @@
         var input = document.getElementById("cl-new-text");
         var text = input.value.trim();
         if(!text) return;
-        state.checklist.push({id: uid(), cat:"Personnalisé", text: text, checked:false});
+        var newItem = {id: uid(), cat:"Personnalisé", text: text};
+        TRAVELERS.forEach(function(name){ newItem["checked"+name] = false; });
+        state.checklist.push(newItem);
         persist();
       });
     }
