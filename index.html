@@ -115,8 +115,17 @@
     font-family:'Noto Serif KR', serif; font-size:17px; margin:0 0 2px; font-weight:600;
   }
   .day-card .subline{ color:var(--ink-soft); font-size:12.5px; margin:0 0 12px; }
+  .reco-box{ background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius-s); padding:10px 12px; margin:0 0 14px; }
+  .reco-header{ font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.02em; color:var(--ink-soft); margin-bottom:6px; }
+  .reco-list{ margin:0; padding-left:18px; font-size:13px; color:var(--ink); }
+  .reco-list li{ margin-bottom:4px; }
   .event{
-    display:flex; gap:10px; padding:10px 0; border-top:1px solid var(--line);
+    display:flex; align-items:flex-start; gap:6px; padding:10px 0; border-top:1px solid var(--line);
+  }
+  .event.dragging{ opacity:.4; }
+  .drag-handle{
+    flex-shrink:0; cursor:grab; touch-action:none; color:var(--ink-soft); font-size:18px;
+    padding:6px 2px; user-select:none; min-width:28px; min-height:40px; display:flex; align-items:center; justify-content:center;
   }
   .event:first-of-type{border-top:none;}
   .event .icon{ font-size:18px; line-height:1.4; flex-shrink:0; width:22px; text-align:center;}
@@ -130,11 +139,23 @@
     background:var(--surface-2); border:1px solid var(--line); padding:4px 9px; border-radius:999px;
     text-decoration:none;
   }
+  .event-actions{ display:flex; flex-direction:column; gap:0; flex-shrink:0; }
+  .event .edit{
+    background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:15px;
+    padding:8px; opacity:.55; min-width:36px; min-height:36px;
+  }
+  .event .edit:hover{opacity:1; color:var(--celadon-ink);}
   .event .del{
     flex-shrink:0; background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:16px;
     padding:10px 8px; opacity:.55; min-width:36px; min-height:36px;
   }
   .event .del:hover{opacity:1; color:var(--danger);}
+  .edit-form .row{ display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
+  .edit-form select, .edit-form input[type="time"], .edit-form input[type="text"], .edit-form textarea{
+    font-family:inherit; font-size:16px; border:1px solid var(--line); border-radius:var(--radius-s);
+    padding:9px 8px; background:var(--surface-2); color:var(--ink); width:100%; min-height:44px;
+  }
+  .edit-form textarea{ min-height:60px; resize:vertical; }
   .empty-hint{ color:var(--ink-soft); font-size:13.5px; padding:6px 0 4px; font-style:italic;}
 
   .add-toggle{
@@ -238,7 +259,7 @@
   }
   .offline-banner.show{ display:flex; }
 
-  /* day extras: comments + shared documents */
+  /* day extras: shared photos and documents */
   .day-extra{ margin-top:14px; padding-top:12px; border-top:1px dashed var(--line); display:flex; flex-direction:column; gap:16px; }
 
   .dc-photos{ display:grid; grid-template-columns:repeat(auto-fill, minmax(84px, 1fr)); gap:8px; margin-bottom:8px; }
@@ -263,13 +284,7 @@
   }
   .dc-list{ display:flex; flex-direction:column; gap:8px; margin-bottom:8px; }
   .dc-empty{ color:var(--ink-soft); font-size:12.5px; font-style:italic; }
-  .dc-comment{ background:var(--surface-2); border-radius:var(--radius-s); padding:8px 10px; font-size:13.5px; }
-  .dc-comment .dc-meta{ display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:11px; color:var(--ink-soft); margin-bottom:3px; }
-  .dc-comment .dc-meta-right{ display:flex; align-items:center; gap:6px; flex-shrink:0; }
-  .dc-comment .dc-author{ font-weight:600; color:var(--ink); }
-  .dc-comment .dc-text{ white-space:pre-wrap; word-break:break-word; }
-  .dc-comment .del{ background:none; border:none; color:var(--ink-soft); opacity:.5; cursor:pointer; font-size:15px; padding:6px; line-height:1; min-width:32px; min-height:32px; }
-  .dc-comment .del:hover{ opacity:1; color:var(--danger); }
+  
   .dc-doc{ display:flex; align-items:center; flex-wrap:wrap; gap:8px; background:var(--surface-2); border-radius:var(--radius-s); padding:9px 10px; font-size:13px; }
   .dc-doc a{ color:var(--celadon-ink); text-decoration:none; font-weight:600; flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .dc-doc .dc-doc-meta{ font-size:11px; color:var(--ink-soft); flex-shrink:0; width:100%; order:3; }
@@ -337,7 +352,7 @@
     <p class="dates">29 septembre → 14 octobre 2026 · 16 jours</p>
   </header>
 
-  <div class="offline-banner" id="offline-banner">📡 Hors ligne — vous voyez les dernières données reçues ; les nouveaux commentaires et documents nécessitent une connexion.</div>
+  <div class="offline-banner" id="offline-banner">📡 Hors ligne — vous voyez les dernières données reçues ; les nouveaux documents et photos nécessitent une connexion.</div>
 
   <nav class="tabs">
     <button class="tab-btn active" data-tab="calendar">Itinéraire</button>
@@ -362,447 +377,7 @@
 </div>
 
 <script id="app-state" type="application/json">
-{
-  "tripStart": "2026-09-29",
-  "tripEnd": "2026-10-14",
-  "cities": {
-    "2026-09-29": "Séoul",
-    "2026-09-30": "Suncheon",
-    "2026-10-01": "Jeonju",
-    "2026-10-02": "Gyeongju",
-    "2026-10-03": "Gyeongju",
-    "2026-10-04": "Busan",
-    "2026-10-05": "Busan",
-    "2026-10-06": "Jeju",
-    "2026-10-07": "Jeju",
-    "2026-10-08": "Jeju",
-    "2026-10-09": "Séoul",
-    "2026-10-10": "Séoul",
-    "2026-10-11": "Séoul",
-    "2026-10-12": "Séoul",
-    "2026-10-13": "Séoul",
-    "2026-10-14": "Séoul"
-  },
-  "days": {
-    "2026-09-29": [
-      {
-        "id": "e01",
-        "type": "vol",
-        "time": "10:20",
-        "title": "Vol Luxembourg → Séoul (Turkish Airlines)",
-        "notes": "Arrivée à Séoul le 30/09 vers 08:35 (heure locale)"
-      }
-    ],
-    "2026-09-30": [
-      {
-        "id": "e02",
-        "type": "train",
-        "time": "12:19",
-        "title": "Train KTX 513 : Séoul → Suncheon",
-        "notes": "Arrivée prévue 15:01"
-      },
-      {
-        "id": "e03",
-        "type": "hotel",
-        "time": "",
-        "title": "Hotel Iam (Suncheon)",
-        "notes": "",
-        "address": "Hotel Iam, Suncheon, Corée du Sud"
-      },
-      {
-        "id": "e04",
-        "type": "activite",
-        "time": "",
-        "title": "Déjeuner / temps libre à Suncheon",
-        "notes": "Prévoir un créneau déjeuner si un lieu est ouvert avant le train"
-      }
-    ],
-    "2026-10-01": [
-      {
-        "id": "e05",
-        "type": "train",
-        "time": "",
-        "title": "Train KTX : Suncheon → Jeonju",
-        "notes": "Horaires à préciser"
-      },
-      {
-        "id": "e06",
-        "type": "hotel",
-        "time": "",
-        "title": "Jungdam (Jeonju)",
-        "notes": "",
-        "address": "Jungdam, Jeonju, Corée du Sud"
-      },
-      {
-        "id": "e07",
-        "type": "activite",
-        "time": "",
-        "title": "Activités à Jeonju",
-        "notes": "À définir selon l'humeur du jour"
-      }
-    ],
-    "2026-10-02": [
-      {
-        "id": "e08",
-        "type": "activite",
-        "time": "",
-        "title": "Matinée à Jeonju avant départ",
-        "notes": "Jeonju se visite en une demi-journée : ne pas partir trop tard"
-      },
-      {
-        "id": "e09",
-        "type": "train",
-        "time": "16:10",
-        "title": "Bus : Jeonju → Gyeongju",
-        "notes": "Arrivée prévue 19:10"
-      },
-      {
-        "id": "e10",
-        "type": "hotel",
-        "time": "",
-        "title": "4-6 Gyochon-gil (Gyeongju)",
-        "notes": "",
-        "address": "4-6 Gyochon-gil, Gyeongju, Corée du Sud"
-      }
-    ],
-    "2026-10-03": [
-      {
-        "id": "e11",
-        "type": "hotel",
-        "time": "",
-        "title": "4-6 Gyochon-gil (Gyeongju) — nuit 2",
-        "notes": "",
-        "address": "4-6 Gyochon-gil, Gyeongju, Corée du Sud"
-      },
-      {
-        "id": "e12",
-        "type": "activite",
-        "time": "",
-        "title": "Journée libre à Gyeongju",
-        "notes": "Budget prévisionnel : activités + repas"
-      }
-    ],
-    "2026-10-04": [
-      {
-        "id": "e13",
-        "type": "train",
-        "time": "",
-        "title": "Bus : Gyeongju → Busan",
-        "notes": "Bus toutes les ~40 min · Jusqu'à Busan Ouest (Seobu / Sasang)"
-      },
-      {
-        "id": "e14",
-        "type": "hotel",
-        "time": "",
-        "title": "Cosy Tree Hotel Seomyeon (Busan)",
-        "notes": "",
-        "address": "Cosy Tree Hotel Seomyeon, Busan, Corée du Sud"
-      }
-    ],
-    "2026-10-05": [
-      {
-        "id": "e15",
-        "type": "hotel",
-        "time": "",
-        "title": "Cosy Tree Hotel Seomyeon (Busan) — nuit 2",
-        "notes": "",
-        "address": "Cosy Tree Hotel Seomyeon, Busan, Corée du Sud"
-      },
-      {
-        "id": "e16",
-        "type": "activite",
-        "time": "",
-        "title": "Journée libre à Busan",
-        "notes": "Budget prévisionnel : activités + repas"
-      }
-    ],
-    "2026-10-06": [
-      {
-        "id": "e17",
-        "type": "vol",
-        "time": "17:50",
-        "title": "Vol + voiture : Busan → Jeju",
-        "notes": "Arrivée prévue 18:50 · ⚠️ Vérifier Lotte"
-      },
-      {
-        "id": "e18",
-        "type": "hotel",
-        "time": "",
-        "title": "Hotel Run (Jeju)",
-        "notes": "",
-        "address": "Hotel Run, Jeju, Corée du Sud"
-      }
-    ],
-    "2026-10-07": [
-      {
-        "id": "e19",
-        "type": "train",
-        "time": "",
-        "title": "Location de voiture à Jeju",
-        "notes": ""
-      },
-      {
-        "id": "e20",
-        "type": "hotel",
-        "time": "",
-        "title": "Hotel Run (Jeju) — nuit 2",
-        "notes": "",
-        "address": "Hotel Run, Jeju, Corée du Sud"
-      }
-    ],
-    "2026-10-08": [
-      {
-        "id": "e21",
-        "type": "hotel",
-        "time": "",
-        "title": "Hotel Run (Jeju) — nuit 3",
-        "notes": "",
-        "address": "Hotel Run, Jeju, Corée du Sud"
-      },
-      {
-        "id": "e22",
-        "type": "activite",
-        "time": "",
-        "title": "Journée libre à Jeju",
-        "notes": "Budget prévisionnel : activités + repas"
-      }
-    ],
-    "2026-10-09": [
-      {
-        "id": "e23",
-        "type": "vol",
-        "time": "19:40",
-        "title": "Vol : Jeju → Séoul",
-        "notes": "Arrivée prévue 20:55 · ⚠️ Vérifier Lotte"
-      },
-      {
-        "id": "e24",
-        "type": "hotel",
-        "time": "",
-        "title": "ibis Ambassador Seoul Insadong",
-        "notes": "",
-        "address": "ibis Ambassador Seoul Insadong, Séoul, Corée du Sud"
-      }
-    ],
-    "2026-10-10": [
-      {
-        "id": "e25",
-        "type": "hotel",
-        "time": "",
-        "title": "ibis Ambassador Seoul Insadong — nuit 2",
-        "notes": "",
-        "address": "ibis Ambassador Seoul Insadong, Séoul, Corée du Sud"
-      },
-      {
-        "id": "e26",
-        "type": "activite",
-        "time": "",
-        "title": "Journée libre à Séoul",
-        "notes": "Budget prévisionnel : activités + repas"
-      }
-    ],
-    "2026-10-11": [
-      {
-        "id": "e27",
-        "type": "hotel",
-        "time": "",
-        "title": "ibis Ambassador Seoul Insadong — nuit 3",
-        "notes": "",
-        "address": "ibis Ambassador Seoul Insadong, Séoul, Corée du Sud"
-      },
-      {
-        "id": "e28",
-        "type": "activite",
-        "time": "",
-        "title": "Journée libre à Séoul",
-        "notes": "Budget prévisionnel : activités + repas"
-      }
-    ],
-    "2026-10-12": [
-      {
-        "id": "e29",
-        "type": "hotel",
-        "time": "",
-        "title": "ibis Ambassador Seoul Insadong — nuit 4",
-        "notes": "",
-        "address": "ibis Ambassador Seoul Insadong, Séoul, Corée du Sud"
-      },
-      {
-        "id": "e30",
-        "type": "activite",
-        "time": "",
-        "title": "Journée à Séoul",
-        "notes": "Budget prévisionnel : activités (75€) + repas (30€)"
-      }
-    ],
-    "2026-10-13": [
-      {
-        "id": "e31",
-        "type": "hotel",
-        "time": "",
-        "title": "ibis Ambassador Seoul Insadong — nuit 5",
-        "notes": "",
-        "address": "ibis Ambassador Seoul Insadong, Séoul, Corée du Sud"
-      },
-      {
-        "id": "e32",
-        "type": "activite",
-        "time": "",
-        "title": "Journée à Séoul",
-        "notes": "Budget prévisionnel : activités (55€) + repas (30€)"
-      }
-    ],
-    "2026-10-14": [
-      {
-        "id": "e33",
-        "type": "vol",
-        "time": "23:20",
-        "title": "Vol retour : Séoul → Luxembourg (Turkish Airlines)",
-        "notes": "Arrivée à Luxembourg le 15/10 vers 09:25 (heure locale) · Coût non renseigné dans le fichier d'origine"
-      }
-    ]
-  },
-  "checklist": [
-    {
-      "id": "c1",
-      "cat": "Documents",
-      "text": "Passeport valide (6 mois après le retour)",
-      "checked": false
-    },
-    {
-      "id": "c2",
-      "cat": "Documents",
-      "text": "K-ETA validé (autorisation électronique de voyage)",
-      "checked": false
-    },
-    {
-      "id": "c3",
-      "cat": "Documents",
-      "text": "Billets d'avion + réservations imprimés ou en PDF hors-ligne",
-      "checked": false
-    },
-    {
-      "id": "c4",
-      "cat": "Documents",
-      "text": "Assurance voyage (attestation + numéro d'urgence)",
-      "checked": false
-    },
-    {
-      "id": "c5",
-      "cat": "Documents",
-      "text": "Copies des documents importants (cloud + papier)",
-      "checked": false
-    },
-    {
-      "id": "c20",
-      "cat": "Transport à réserver",
-      "text": "Billets de bus longue distance (intercitybuse.tmoney.co.kr)",
-      "checked": false
-    },
-    {
-      "id": "c21",
-      "cat": "Transport à réserver",
-      "text": "Billets KTX (korail.com/global/eng/ticket)",
-      "checked": false
-    },
-    {
-      "id": "c22",
-      "cat": "Transport à réserver",
-      "text": "Confirmer la location de voiture à Jeju",
-      "checked": false
-    },
-    {
-      "id": "c6",
-      "cat": "Argent & connectivité",
-      "text": "Wons coréens en espèces pour l'arrivée",
-      "checked": false
-    },
-    {
-      "id": "c7",
-      "cat": "Argent & connectivité",
-      "text": "Carte bancaire sans frais à l'étranger + banque prévenue",
-      "checked": false
-    },
-    {
-      "id": "c8",
-      "cat": "Argent & connectivité",
-      "text": "eSIM / SIM coréenne ou pocket wifi réservé",
-      "checked": false
-    },
-    {
-      "id": "c9",
-      "cat": "Argent & connectivité",
-      "text": "Adaptateur prise type C/F",
-      "checked": false
-    },
-    {
-      "id": "c10",
-      "cat": "Argent & connectivité",
-      "text": "App de traduction et cartes hors-ligne téléchargées (Papago, Naver/Kakao Map)",
-      "checked": false
-    },
-    {
-      "id": "c11",
-      "cat": "Santé",
-      "text": "Médicaments habituels + ordonnance en anglais",
-      "checked": false
-    },
-    {
-      "id": "c12",
-      "cat": "Santé",
-      "text": "Petite trousse de pharmacie",
-      "checked": false
-    },
-    {
-      "id": "c13",
-      "cat": "Bagages",
-      "text": "Vêtements pour météo d'automne (frais le soir)",
-      "checked": false
-    },
-    {
-      "id": "c14",
-      "cat": "Bagages",
-      "text": "Chaussures confortables pour marcher",
-      "checked": false
-    },
-    {
-      "id": "c15",
-      "cat": "Bagages",
-      "text": "Batterie externe + chargeurs",
-      "checked": false
-    },
-    {
-      "id": "c16",
-      "cat": "Derniers préparatifs",
-      "text": "Check-in en ligne des vols",
-      "checked": false
-    },
-    {
-      "id": "c17",
-      "cat": "Derniers préparatifs",
-      "text": "Confirmation des réservations d'hôtel",
-      "checked": false
-    },
-    {
-      "id": "c18",
-      "cat": "Derniers préparatifs",
-      "text": "Transport vers l'aéroport de départ organisé",
-      "checked": false
-    },
-    {
-      "id": "c19",
-      "cat": "Derniers préparatifs",
-      "text": "Courrier / plantes / animaux gérés pendant l'absence",
-      "checked": false
-    },
-    {
-      "id": "c23",
-      "cat": "Vol retour du 14/10",
-      "text": "Retrouver / réserver le tarif du vol retour Séoul → Luxembourg (non renseigné)",
-      "checked": false
-    }
-  ]
-}
+{"tripStart": "2026-09-29", "tripEnd": "2026-10-14", "cities": {"2026-09-29": "Séoul", "2026-09-30": "Suncheon", "2026-10-01": "Jeonju", "2026-10-02": "Gyeongju", "2026-10-03": "Gyeongju", "2026-10-04": "Busan", "2026-10-05": "Busan", "2026-10-06": "Jeju", "2026-10-07": "Jeju", "2026-10-08": "Jeju", "2026-10-09": "Séoul", "2026-10-10": "Séoul", "2026-10-11": "Séoul", "2026-10-12": "Séoul", "2026-10-13": "Séoul", "2026-10-14": "Séoul"}, "days": {"2026-09-29": [{"id": "e01", "type": "vol", "time": "10:20", "title": "Vol Luxembourg → Séoul (Turkish Airlines)", "notes": "Arrivée à Séoul le 30/09 vers 08:35 (heure locale)"}], "2026-09-30": [{"id": "e02", "type": "train", "time": "12:19", "title": "Train KTX 513 : Séoul → Suncheon", "notes": "Arrivée prévue 15:01"}, {"id": "e03", "type": "hotel", "time": "16:00", "title": "Hotel Iam (Suncheon)", "notes": "Check-in 16:00–22:00 · Check-out jusqu'à 11:00 · Petit-déjeuner inclus", "address": "4, Yeokjeongwangjang 1-gil, Suncheon, 57962, Corée du Sud"}, {"id": "e04", "type": "activite", "time": "", "title": "Déjeuner / temps libre à Suncheon", "notes": "Prévoir un créneau déjeuner si un lieu est ouvert avant le train"}], "2026-10-01": [{"id": "e05", "type": "train", "time": "", "title": "Train KTX : Suncheon → Jeonju", "notes": "Horaires à préciser"}, {"id": "e06", "type": "hotel", "time": "14:00", "title": "Jungdam (Jeonju)", "notes": "Check-in 14:00–22:00 · Check-out 07:00–10:30 · Petit-déjeuner inclus", "address": "21-4, Choemyeonghui-gil, Wansan-gu, Jeonju-si, Jeollabuk-do, 55042, Corée du Sud"}, {"id": "e07", "type": "activite", "time": "", "title": "Activités à Jeonju", "notes": "À définir selon l'humeur du jour"}], "2026-10-02": [{"id": "e08", "type": "activite", "time": "", "title": "Matinée à Jeonju avant départ", "notes": "Jeonju se visite en une demi-journée : ne pas partir trop tard"}, {"id": "e09", "type": "train", "time": "16:10", "title": "Bus : Jeonju → Gyeongju", "notes": "Arrivée prévue 19:10"}, {"id": "e10", "type": "hotel", "time": "16:00", "title": "Donggung 2 (Gyeongju)", "notes": "Check-in 16:00 · Check-out 11:00 · Pas de petit-déjeuner (logement Airbnb) · Hôte 채진 : +82 10-3539-1004 · Code de réservation : HMM32BJZFB", "address": "4-6 Gyochon-gil, Gyeongju-si, North Gyeongsang Province 38170, Corée du Sud"}], "2026-10-03": [{"id": "e11", "type": "hotel", "time": "", "title": "4-6 Gyochon-gil (Gyeongju) — nuit 2", "notes": "", "address": "4-6 Gyochon-gil, Gyeongju, Corée du Sud"}, {"id": "e12", "type": "activite", "time": "", "title": "Journée libre à Gyeongju", "notes": "Budget prévisionnel : activités + repas"}], "2026-10-04": [{"id": "e13", "type": "train", "time": "", "title": "Bus : Gyeongju → Busan", "notes": "Bus toutes les ~40 min · Jusqu'à Busan Ouest (Seobu / Sasang)"}, {"id": "e14", "type": "hotel", "time": "17:00", "title": "Cozy Tree Hotel Seomyeon (Busan)", "notes": "Check-in à partir de 17:00 · Check-out jusqu'à 12:00 · Petit-déjeuner non inclus", "address": "19, Hwangnyeong-daero, Busanjin-gu, Busan, 47353, Corée du Sud"}], "2026-10-05": [{"id": "e15", "type": "hotel", "time": "", "title": "Cosy Tree Hotel Seomyeon (Busan) — nuit 2", "notes": "", "address": "Cosy Tree Hotel Seomyeon, Busan, Corée du Sud"}, {"id": "e16", "type": "activite", "time": "", "title": "Journée libre à Busan", "notes": "Budget prévisionnel : activités + repas"}], "2026-10-06": [{"id": "e17", "type": "vol", "time": "17:50", "title": "Vol + voiture : Busan → Jeju", "notes": "Arrivée prévue 18:50 · ⚠️ Vérifier Lotte"}, {"id": "e18", "type": "hotel", "time": "", "title": "Hotel Run (Jeju)", "notes": "", "address": "Hotel Run, Jeju, Corée du Sud"}], "2026-10-07": [{"id": "e19", "type": "train", "time": "", "title": "Location de voiture à Jeju", "notes": ""}, {"id": "e20", "type": "hotel", "time": "", "title": "Hotel Run (Jeju) — nuit 2", "notes": "", "address": "Hotel Run, Jeju, Corée du Sud"}], "2026-10-08": [{"id": "e21", "type": "hotel", "time": "", "title": "Hotel Run (Jeju) — nuit 3", "notes": "", "address": "Hotel Run, Jeju, Corée du Sud"}, {"id": "e22", "type": "activite", "time": "", "title": "Journée libre à Jeju", "notes": "Budget prévisionnel : activités + repas"}], "2026-10-09": [{"id": "e23", "type": "vol", "time": "19:40", "title": "Vol : Jeju → Séoul", "notes": "Arrivée prévue 20:55 · ⚠️ Vérifier Lotte"}, {"id": "e24", "type": "hotel", "time": "", "title": "ibis Ambassador Seoul Insadong", "notes": "", "address": "ibis Ambassador Seoul Insadong, Séoul, Corée du Sud"}], "2026-10-10": [{"id": "e25", "type": "hotel", "time": "", "title": "ibis Ambassador Seoul Insadong — nuit 2", "notes": "", "address": "ibis Ambassador Seoul Insadong, Séoul, Corée du Sud"}, {"id": "e26", "type": "activite", "time": "", "title": "Journée libre à Séoul", "notes": "Budget prévisionnel : activités + repas"}], "2026-10-11": [{"id": "e27", "type": "hotel", "time": "", "title": "ibis Ambassador Seoul Insadong — nuit 3", "notes": "", "address": "ibis Ambassador Seoul Insadong, Séoul, Corée du Sud"}, {"id": "e28", "type": "activite", "time": "", "title": "Journée libre à Séoul", "notes": "Budget prévisionnel : activités + repas"}], "2026-10-12": [{"id": "e29", "type": "hotel", "time": "", "title": "ibis Ambassador Seoul Insadong — nuit 4", "notes": "", "address": "ibis Ambassador Seoul Insadong, Séoul, Corée du Sud"}, {"id": "e30", "type": "activite", "time": "", "title": "Journée à Séoul", "notes": "Budget prévisionnel : activités (75€) + repas (30€)"}], "2026-10-13": [{"id": "e31", "type": "hotel", "time": "", "title": "ibis Ambassador Seoul Insadong — nuit 5", "notes": "", "address": "ibis Ambassador Seoul Insadong, Séoul, Corée du Sud"}, {"id": "e32", "type": "activite", "time": "", "title": "Journée à Séoul", "notes": "Budget prévisionnel : activités (55€) + repas (30€)"}], "2026-10-14": [{"id": "e33", "type": "vol", "time": "23:20", "title": "Vol retour : Séoul → Luxembourg (Turkish Airlines)", "notes": "Arrivée à Luxembourg le 15/10 vers 09:25 (heure locale) · Coût non renseigné dans le fichier d'origine"}]}, "checklist": [{"id": "c1", "cat": "Documents", "text": "Passeport valide (6 mois après le retour)", "checked": false}, {"id": "c2", "cat": "Documents", "text": "K-ETA validé (autorisation électronique de voyage)", "checked": false}, {"id": "c3", "cat": "Documents", "text": "Billets d'avion + réservations imprimés ou en PDF hors-ligne", "checked": false}, {"id": "c4", "cat": "Documents", "text": "Assurance voyage (attestation + numéro d'urgence)", "checked": false}, {"id": "c5", "cat": "Documents", "text": "Copies des documents importants (cloud + papier)", "checked": false}, {"id": "c20", "cat": "Transport à réserver", "text": "Billets de bus longue distance (intercitybuse.tmoney.co.kr)", "checked": false}, {"id": "c21", "cat": "Transport à réserver", "text": "Billets KTX (korail.com/global/eng/ticket)", "checked": false}, {"id": "c22", "cat": "Transport à réserver", "text": "Confirmer la location de voiture à Jeju", "checked": false}, {"id": "c6", "cat": "Argent & connectivité", "text": "Wons coréens en espèces pour l'arrivée", "checked": false}, {"id": "c7", "cat": "Argent & connectivité", "text": "Carte bancaire sans frais à l'étranger + banque prévenue", "checked": false}, {"id": "c8", "cat": "Argent & connectivité", "text": "eSIM / SIM coréenne ou pocket wifi réservé", "checked": false}, {"id": "c9", "cat": "Argent & connectivité", "text": "Adaptateur prise type C/F", "checked": false}, {"id": "c10", "cat": "Argent & connectivité", "text": "App de traduction et cartes hors-ligne téléchargées (Papago, Naver/Kakao Map)", "checked": false}, {"id": "c11", "cat": "Santé", "text": "Médicaments habituels + ordonnance en anglais", "checked": false}, {"id": "c12", "cat": "Santé", "text": "Petite trousse de pharmacie", "checked": false}, {"id": "c13", "cat": "Bagages", "text": "Vêtements pour météo d'automne (frais le soir)", "checked": false}, {"id": "c14", "cat": "Bagages", "text": "Chaussures confortables pour marcher", "checked": false}, {"id": "c15", "cat": "Bagages", "text": "Batterie externe + chargeurs", "checked": false}, {"id": "c16", "cat": "Derniers préparatifs", "text": "Check-in en ligne des vols", "checked": false}, {"id": "c17", "cat": "Derniers préparatifs", "text": "Confirmation des réservations d'hôtel", "checked": false}, {"id": "c18", "cat": "Derniers préparatifs", "text": "Transport vers l'aéroport de départ organisé", "checked": false}, {"id": "c19", "cat": "Derniers préparatifs", "text": "Courrier / plantes / animaux gérés pendant l'absence", "checked": false}, {"id": "c23", "cat": "Vol retour du 14/10", "text": "Retrouver / réserver le tarif du vol retour Séoul → Luxembourg (non renseigné)", "checked": false}]}
 </script>
 
 <!--
@@ -860,9 +435,9 @@
   var selectedDay = null;
   var openAddForm = null; // date string currently showing its add-form
   var openAttachId = null; // event id currently showing its attach form
+  var editingEventId = null; // event id currently being edited
 
-  // live shared data (comments + day-level documents), grouped by day iso
-  var commentsByDay = {};
+  // live shared data (day-level photos and documents), grouped by day iso
   var docsByDay = {};
   var photosByDay = {};
   var profileCache = {}; // authorId -> {name, ...}
@@ -907,6 +482,46 @@
     "Gyeongju":"13–24°C, doux, peu de pluie",
     "Busan":"17–24°C, littoral, un peu plus humide",
     "Jeju":"18–25°C, le plus doux, vent et averses possibles (fin de saison des typhons)"
+  };
+
+  var RECOMMENDATIONS = {
+    "Séoul": [
+      "🏯 Palais Gyeongbokgung et la relève de la garde, avec le hanok village de Bukchon juste à côté",
+      "🍢 Marché de Gwangjang pour le street food (bindaetteok, kimbap, mayak gimbap)",
+      "🛍️ Myeongdong pour le shopping et les cosmétiques coréens",
+      "🌆 Namsan Seoul Tower pour la vue sur la ville, surtout au coucher du soleil",
+      "🎨 Quartier d'Insadong (juste à côté de l'hôtel) pour l'artisanat et le thé traditionnel"
+    ],
+    "Suncheon": [
+      "🌾 Suncheonman Bay Wetland — vaste zone humide protégée, magnifique au coucher du soleil",
+      "🎬 Suncheon Open Film Location, un village qui recrée la Corée des années 1950-80",
+      "🌳 Le jardin national de la baie de Suncheon (Suncheon Bay National Garden)"
+    ],
+    "Jeonju": [
+      "🏘️ Le village hanok de Jeonju, le plus grand et le mieux conservé du pays",
+      "🍚 Le bibimbap de Jeonju, plat signature de la ville — à ne pas manquer",
+      "🌃 Nambu Market (marché nocturne) pour le street food",
+      "⛩️ Gyeonggijeon Shrine, à l'intérieur même du village hanok"
+    ],
+    "Gyeongju": [
+      "🏛️ Bulguksa et la grotte de Seokguram, classés UNESCO",
+      "⛰️ Tumuli Park, les tombeaux royaux du royaume de Silla en forme de collines herbeuses",
+      "🌙 L'étang de Donggung (Anapji), particulièrement beau illuminé le soir",
+      "🚲 Louer un vélo pour explorer le centre historique, très plat et agréable"
+    ],
+    "Busan": [
+      "🎨 Village culturel de Gamcheon, ses maisons colorées à flanc de colline",
+      "🐟 Marché aux poissons de Jagalchi, le plus grand marché aux fruits de mer du pays",
+      "🏖️ Plage de Haeundae",
+      "⛩️ Temple Haedong Yonggungsa, rare temple bouddhiste construit en bord de mer"
+    ],
+    "Jeju": [
+      "🌋 Lever de soleil sur le volcan Seongsan Ilchulbong (site UNESCO)",
+      "🕳️ Grotte de lave de Manjanggul, l'un des plus longs tunnels de lave au monde",
+      "💧 Cascade de Cheonjiyeon",
+      "🌊 Route côtière et plages de l'ouest (Hyeopjae, Hamdeok)",
+      "🤿 Les haenyeo, les célèbres plongeuses traditionnelles de l'île"
+    ]
   };
 
   function mapsUrl(address){
@@ -976,7 +591,7 @@
     var card = document.createElement("div");
     card.className = "day-card" + (iso===today?" today":"");
     card.id = "day-"+iso;
-    var events = (state.days[iso]||[]).slice().sort(function(a,b){ return (a.time||"").localeCompare(b.time||""); });
+    var events = (state.days[iso]||[]).slice();
 
     var city = (state.cities||{})[iso];
     var html = "<div class='day-nav'>"+
@@ -985,32 +600,47 @@
     "</div>";
     html += "<h2>"+fmtLong(iso)+"</h2><p class='subline'>Jour "+ (dateList().indexOf(iso)+1) +" sur 16"+(city?" · "+escapeHtml(city):"")+"</p>";
     if(city && CLIMATE[city]) html += "<p class='climate-line'>🌤 Climat de saison (moyennes) : "+CLIMATE[city]+"</p>";
+    if(city && RECOMMENDATIONS[city]){
+      html += "<div class='reco-box'><div class='reco-header'>💡 À découvrir à "+escapeHtml(city)+"</div><ul class='reco-list'>"+
+        RECOMMENDATIONS[city].map(function(r){ return "<li>"+r+"</li>"; }).join("")+
+      "</ul></div>";
+    }
     if(events.length===0){
       html += "<p class='empty-hint'>Rien de prévu pour l'instant.</p>";
     } else {
+      html += "<div class='events-list' data-events-for='"+iso+"'>";
       events.forEach(function(ev){
         var t = EVENT_TYPES[ev.type] || EVENT_TYPES.autre;
         html += "<div class='event' data-id='"+ev.id+"'>";
-        html += "<div class='icon'>"+t.icon+"</div>";
-        html += "<div class='body'>";
-        html += "<div><span class='time'>"+(ev.time||"")+"</span><span class='title'>"+escapeHtml(ev.title||t.label)+"</span></div>";
-        if(ev.notes) html += "<div class='notes'>"+escapeHtml(ev.notes)+"</div>";
-        var metaBits = "";
-        if(ev.address) metaBits += "<a class='maps-link' target='_blank' rel='noopener' href='"+mapsUrl(ev.address)+"'>📍 Voir sur la carte</a>";
-        if(ev.attachment){
-          var aIcon = ev.attachment.kind==="link" ? "🔗" : "📎";
-          var ownerBadge = ev.attachment.owner && ev.attachment.owner!=="Commun" ? " <span class='owner-badge'>👤 "+escapeHtml(ev.attachment.owner)+"</span>" : "";
-          metaBits += "<a class='attach-link' target='_blank' rel='noopener' href='"+ev.attachment.url+"'>"+aIcon+" "+escapeHtml(ev.attachment.name||"Document")+"</a>"+ownerBadge;
-          metaBits += "<button class='link-toggle' data-del-attach='"+ev.id+"' data-del-attach-day='"+iso+"'>✕ Retirer</button>";
+        if(editingEventId === ev.id){
+          html += "<div class='body'>"+editFormHtml(iso, ev)+"</div>";
         } else {
-          metaBits += "<button class='link-toggle' data-attach-toggle='"+ev.id+"'>"+(openAttachId===ev.id?"– Fermer":"📎 Ajouter un document / lien")+"</button>";
+          html += "<span class='drag-handle' data-drag-handle='"+ev.id+"' title='Réordonner'>⠿</span>";
+          html += "<div class='icon'>"+t.icon+"</div>";
+          html += "<div class='body'>";
+          html += "<div><span class='time'>"+(ev.time||"")+"</span><span class='title'>"+escapeHtml(ev.title||t.label)+"</span></div>";
+          if(ev.notes) html += "<div class='notes'>"+escapeHtml(ev.notes)+"</div>";
+          var metaBits = "";
+          if(ev.address) metaBits += "<a class='maps-link' target='_blank' rel='noopener' href='"+mapsUrl(ev.address)+"'>📍 Voir sur la carte</a>";
+          if(ev.attachment){
+            var aIcon = ev.attachment.kind==="link" ? "🔗" : "📎";
+            var ownerBadge = ev.attachment.owner && ev.attachment.owner!=="Commun" ? " <span class='owner-badge'>👤 "+escapeHtml(ev.attachment.owner)+"</span>" : "";
+            metaBits += "<a class='attach-link' target='_blank' rel='noopener' href='"+ev.attachment.url+"'>"+aIcon+" "+escapeHtml(ev.attachment.name||"Document")+"</a>"+ownerBadge;
+            metaBits += "<button class='link-toggle' data-del-attach='"+ev.id+"' data-del-attach-day='"+iso+"'>✕ Retirer</button>";
+          } else {
+            metaBits += "<button class='link-toggle' data-attach-toggle='"+ev.id+"'>"+(openAttachId===ev.id?"– Fermer":"📎 Ajouter un document / lien")+"</button>";
+          }
+          if(metaBits) html += "<div class='meta-row'>"+metaBits+"</div>";
+          if(!ev.attachment && openAttachId===ev.id) html += attachFormHtml(iso, ev.id);
+          html += "</div>";
+          html += "<div class='event-actions'>"+
+            "<button class='edit' data-edit-event='"+ev.id+"' title='Modifier'>✎</button>"+
+            "<button class='del' data-del-event='"+ev.id+"' data-del-day='"+iso+"' title='Supprimer'>✕</button>"+
+          "</div>";
         }
-        if(metaBits) html += "<div class='meta-row'>"+metaBits+"</div>";
-        if(!ev.attachment && openAttachId===ev.id) html += attachFormHtml(iso, ev.id);
-        html += "</div>";
-        html += "<button class='del' data-del-event='"+ev.id+"' data-del-day='"+iso+"' title='Supprimer'>✕</button>";
         html += "</div>";
       });
+      html += "</div>";
     }
 
     html += "<button class='add-toggle' data-add-toggle='"+iso+"'>"+(openAddForm===iso ? "– Fermer" : "+ Ajouter un élément")+"</button>";
@@ -1022,10 +652,10 @@
     list.appendChild(card);
 
     wireDayListEvents();
+    wireDragAndDrop(iso);
     wireDayExtraEvents();
     renderPhotosFor(iso);
-    renderCommentsFor(iso);
-    renderDocsFor(iso);
+        renderDocsFor(iso);
 
     var prevBtn = document.getElementById("day-prev");
     var nextBtn = document.getElementById("day-next");
@@ -1039,11 +669,11 @@
     });
   }
 
-  /* ---------- comments + shared documents (per day, synced via db) ---------- */
+  /* ---------- shared photos and documents (per day, synced via db) ---------- */
 
-  // Static shell for one day's comment/document sections. The inner lists
-  // (#comments-list-/#docs-list-) are refreshed independently by
-  // renderCommentsFor/renderDocsFor so a live update from another viewer
+  // Static shell for one day's photo/document sections. The inner lists
+  // (#photos-grid-/#docs-list-) are refreshed independently by
+  // renderDocsFor is refreshed independently so a live update from another viewer
   // never wipes text someone is mid-typing elsewhere on the page.
   function dayExtraShellHtml(iso){
     var canUploadDocs = !!assetsApi;
@@ -1054,14 +684,6 @@
         (canUploadDocs
           ? "<div class='dc-add'><input type='file' accept='image/*' multiple data-photo-input='"+iso+"'><button class='btn btn-primary' data-photo-send='"+iso+"'>Ajouter</button></div>"
           : "<p class='dc-disabled-note'>Connexion en cours…</p>")+
-      "</div>"+
-      "<div class='dc-section'>"+
-        "<div class='dc-header'>💬 Commentaires</div>"+
-        "<div class='dc-list' id='comments-list-"+iso+"'><p class='dc-empty'>Chargement…</p></div>"+
-        "<div class='dc-add'>"+
-          "<textarea placeholder='Ajouter un commentaire…' data-comment-input='"+iso+"'></textarea>"+
-          "<button class='btn btn-primary' data-comment-send='"+iso+"'>Envoyer</button>"+
-        "</div>"+
       "</div>"+
       "<div class='dc-section'>"+
         "<div class='dc-header'>📎 Documents partagés</div>"+
@@ -1136,60 +758,6 @@
     document.body.appendChild(overlay);
   }
 
-  function renderCommentsFor(iso){
-
-    var container = document.getElementById("comments-list-"+iso);
-    if(!container) return;
-    var items = (commentsByDay[iso]||[]).slice().sort(function(a,b){ return (a.createdAt||"").localeCompare(b.createdAt||""); });
-    if(!dbApi){
-      container.innerHTML = "<p class='dc-empty'>Commentaires indisponibles pour l'instant.</p>";
-      return;
-    }
-    if(items.length===0){
-      container.innerHTML = "<p class='dc-empty'>Aucun commentaire pour ce jour.</p>";
-      return;
-    }
-    var ids = items.map(function(i){ return i.authorId; });
-    ensureProfiles(ids, function(){
-      var html = "";
-      items.forEach(function(c){
-        var isMine = myUserId && c.authorId === myUserId;
-        html += "<div class='dc-comment' data-comment-id='"+c.id+"'>"+
-          "<div class='dc-meta'><span class='dc-author'></span>"+
-            "<span class='dc-meta-right'><span>"+fmtRelative(c.createdAt)+"</span>"+
-            (isMine ? "<button class='del' data-comment-del='"+c.id+"' title='Supprimer'>✕</button>" : "")+
-            "</span></div>"+
-          "<div class='dc-text'></div>"+
-        "</div>";
-      });
-      container.innerHTML = html;
-      // set text via textContent to avoid injecting user-controlled names/text as HTML
-      var nodes = container.querySelectorAll(".dc-comment");
-      items.forEach(function(c, i){
-        var prof = profileCache[c.authorId];
-        var name = (prof && prof.name) || "Quelqu'un";
-        nodes[i].querySelector(".dc-author").textContent = name;
-        nodes[i].querySelector(".dc-text").textContent = c.text || "";
-      });
-      wireCommentDeleteButtons(container);
-    });
-  }
-
-  function wireCommentDeleteButtons(scope){
-    scope.querySelectorAll("[data-comment-del]").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        if(!window.confirm("Supprimer définitivement ce commentaire ?")) return;
-        var commentId = btn.getAttribute("data-comment-del");
-        if(!dbApi) return;
-        btn.disabled = true;
-        dbApi.collection("comments").doc(commentId).delete().catch(function(){
-          window.alert("La suppression a échoué. Réessayez.");
-          btn.disabled = false;
-        });
-      });
-    });
-  }
-
   function renderDocsFor(iso){
     var container = document.getElementById("docs-list-"+iso);
     if(!container) return;
@@ -1238,7 +806,7 @@
   }
 
   function refreshAllExtras(){
-    dateList().forEach(function(iso){ renderPhotosFor(iso); renderCommentsFor(iso); renderDocsFor(iso); });
+    dateList().forEach(function(iso){ renderPhotosFor(iso); renderDocsFor(iso); });
   }
 
   function subscribeSharedData(){
@@ -1256,18 +824,6 @@
       } else {
         dbApi.collection("tripState").doc("main").set(state).catch(function(){});
       }
-    }, function(){ /* transient — keep last known state visible */ });
-
-    dbApi.collection("comments").orderBy("createdAt","asc").onSnapshot(function(snap){
-      var byDay = {};
-      snap.docs.forEach(function(doc){
-        var d = doc.data();
-        if(!d || !d.day) return;
-        if(!byDay[d.day]) byDay[d.day] = [];
-        byDay[d.day].push({ id: doc.id, text: d.text, authorId: d.authorId, createdAt: d.createdAt });
-      });
-      commentsByDay = byDay;
-      dateList().forEach(function(iso){ renderCommentsFor(iso); });
     }, function(){ /* transient — keep last known state visible */ });
 
     dbApi.collection("dayDocuments").orderBy("createdAt","asc").onSnapshot(function(snap){
@@ -1317,27 +873,6 @@
           input.value = "";
         }).catch(function(){
           window.alert("Certaines photos n'ont pas pu être ajoutées. Réessayez.");
-        }).finally(function(){ btn.disabled = false; });
-      });
-    });
-
-    document.querySelectorAll("[data-comment-send]").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        var iso = btn.getAttribute("data-comment-send");
-        var input = document.querySelector("[data-comment-input='"+iso+"']");
-        var text = input.value.trim();
-        if(!text) return;
-        if(!navigator.onLine){ window.alert("Vous êtes hors ligne : le commentaire ne peut pas être envoyé pour l'instant."); return; }
-        if(!dbApi){ window.alert("Les commentaires ne sont pas disponibles dans cette vue."); return; }
-        btn.disabled = true;
-        Promise.resolve(userApi ? userApi.id() : null).then(function(uid){
-          return dbApi.collection("comments").add({
-            day: iso, text: text, authorId: uid || null, createdAt: new Date().toISOString()
-          });
-        }).then(function(){
-          input.value = "";
-        }).catch(function(){
-          window.alert("Le commentaire n'a pas pu être envoyé. Réessayez.");
         }).finally(function(){ btn.disabled = false; });
       });
     });
@@ -1405,6 +940,24 @@
       "<button class='btn btn-primary' data-save='"+iso+"'>Enregistrer</button>";
   }
 
+  function editFormHtml(iso, ev){
+    var opts = "";
+    Object.keys(EVENT_TYPES).forEach(function(k){ opts += "<option value='"+k+"'"+(ev.type===k?" selected":"")+">"+EVENT_TYPES[k].icon+" "+EVENT_TYPES[k].label+"</option>"; });
+    return "<div class='edit-form'>"+
+      "<div class='row'>"+
+        "<select class='ef-type'>"+opts+"</select>"+
+        "<input type='time' class='ef-time' value='"+escapeHtml(ev.time||"")+"'>"+
+      "</div>"+
+      "<div class='row'><input type='text' class='ef-title' value='"+escapeHtml(ev.title||"")+"' placeholder='Titre'></div>"+
+      "<div class='row'><textarea class='ef-notes' placeholder='Notes, numéro de réservation…'>"+escapeHtml(ev.notes||"")+"</textarea></div>"+
+      "<div class='row'><input type='text' class='ef-address' value='"+escapeHtml(ev.address||"")+"' placeholder='Adresse / lieu (pour la carte)'></div>"+
+      "<div class='row'>"+
+        "<button class='btn btn-primary' data-save-edit='"+ev.id+"' data-save-edit-day='"+iso+"'>Enregistrer</button>"+
+        "<button class='btn btn-ghost' data-cancel-edit='"+ev.id+"'>Annuler</button>"+
+      "</div>"+
+    "</div>";
+  }
+
   function escapeHtml(s){
     return String(s).replace(/[&<>"']/g, function(c){
       return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
@@ -1458,6 +1011,88 @@
         handleSaveEvent(btn.getAttribute("data-save"), btn.closest(".add-form"));
       });
     });
+    document.querySelectorAll("[data-edit-event]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        editingEventId = btn.getAttribute("data-edit-event");
+        openAddForm = null;
+        openAttachId = null;
+        renderDayList();
+      });
+    });
+    document.querySelectorAll("[data-cancel-edit]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        editingEventId = null;
+        renderDayList();
+      });
+    });
+    document.querySelectorAll("[data-save-edit]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        handleSaveEditEvent(btn.getAttribute("data-save-edit-day"), btn.getAttribute("data-save-edit"), btn.closest(".edit-form"));
+      });
+    });
+  }
+
+  function handleSaveEditEvent(iso, eventId, formEl){
+    var ev = (state.days[iso]||[]).find(function(e){ return e.id===eventId; });
+    if(!ev) return;
+    ev.type = formEl.querySelector(".ef-type").value;
+    ev.time = formEl.querySelector(".ef-time").value;
+    ev.title = formEl.querySelector(".ef-title").value.trim();
+    ev.notes = formEl.querySelector(".ef-notes").value.trim();
+    var address = formEl.querySelector(".ef-address").value.trim();
+    if(address) ev.address = address; else delete ev.address;
+    editingEventId = null;
+    persist();
+  }
+
+  function wireDragAndDrop(iso){
+    var container = document.querySelector("[data-events-for='"+iso+"']");
+    if(!container) return;
+    var dragEl = null;
+
+    function onMove(e){
+      if(!dragEl) return;
+      var rows = Array.prototype.slice.call(container.querySelectorAll(".event"));
+      var y = e.clientY;
+      for(var i=0;i<rows.length;i++){
+        var r = rows[i];
+        if(r === dragEl) continue;
+        var box = r.getBoundingClientRect();
+        var mid = box.top + box.height/2;
+        if(y < mid){
+          container.insertBefore(dragEl, r);
+          return;
+        }
+      }
+      container.appendChild(dragEl);
+    }
+
+    function onUp(){
+      document.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerup", onUp);
+      document.removeEventListener("pointercancel", onUp);
+      if(!dragEl) return;
+      dragEl.classList.remove("dragging");
+      var newIds = Array.prototype.map.call(container.querySelectorAll(".event"), function(r){ return r.getAttribute("data-id"); });
+      var byId = {};
+      (state.days[iso]||[]).forEach(function(e){ byId[e.id] = e; });
+      state.days[iso] = newIds.map(function(id){ return byId[id]; }).filter(Boolean);
+      dragEl = null;
+      persist();
+    }
+
+    container.querySelectorAll("[data-drag-handle]").forEach(function(handle){
+      handle.addEventListener("pointerdown", function(e){
+        var row = handle.closest(".event");
+        if(!row) return;
+        dragEl = row;
+        row.classList.add("dragging");
+        e.preventDefault();
+        document.addEventListener("pointermove", onMove);
+        document.addEventListener("pointerup", onUp);
+        document.addEventListener("pointercancel", onUp);
+      });
+    });
   }
 
   function normalizeUrl(u){
@@ -1506,7 +1141,9 @@
 
     function finish(){
       if(!state.days[iso]) state.days[iso] = [];
-      state.days[iso].push(ev);
+      var arr = state.days[iso];
+      var idx = arr.findIndex(function(e){ return (e.time||"99:99") > (ev.time||"99:99"); });
+      if(idx === -1) arr.push(ev); else arr.splice(idx, 0, ev);
       openAddForm = null;
       persist();
     }
@@ -1650,7 +1287,7 @@
     try{ saved = localStorage.getItem("coree2026_name"); }catch(e){}
     if(saved) return saved;
     var name = "";
-    try{ name = (window.prompt("Votre prénom, pour vos commentaires et documents partagés :") || "").trim(); }catch(e){}
+    try{ name = (window.prompt("Votre prénom, pour vos photos et documents partagés :") || "").trim(); }catch(e){}
     if(!name) name = "Voyageur·euse";
     try{ localStorage.setItem("coree2026_name", name); }catch(e){}
     return name;
